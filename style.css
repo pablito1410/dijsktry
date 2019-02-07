@@ -1,0 +1,16 @@
+node {
+    fill-color: black, gray;
+    fill-mode: gradient-radial;
+    text-color: white;
+    size: 20px;
+}
+node.marked {
+    size: 20px;
+    fill-color: red, pink;
+    fill-mode: gradient-diagonal2;
+}
+
+
+edge.marked {
+    fill-color: red;
+}
