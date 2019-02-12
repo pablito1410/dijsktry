@@ -23,6 +23,16 @@ public class Application {
     private final DataLoader dataLoader;
     private final DijkstryImpl dijkstry;
     private final PathDisplayer pathDisplayer;
+    private JTextField node1 = new JTextField(5);
+    private JTextField node2 = new JTextField(5);
+    private JTextField distance = new JTextField(5);
+    private JTextField speed = new JTextField(5);
+    private JButton displayGraphButton;
+    private JButton shortestPathButton;
+    private JButton addNode;
+    private JTextArea textArea;
+    private JButton closeGraph;
+    private JButton clearGraph;
 
     public Application(DataLoader dataLoader, DijkstryImpl dijkstry, PathDisplayer pathDisplayer) {
         this.dataLoader = dataLoader;
@@ -50,9 +60,24 @@ public class Application {
         Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 //        viewer.enableAutoLayout();
         UserInterface ui = new UserInterface(viewer, new LayoutFrame());
-        ui.addButton(displayGraphButton(graph));
-        ui.addButton(shortestPathButton(graph, ui));
-        ui.addButton(addNode(graph, ui));
+       ui.addTextField("Node 1:", node1);
+        ui.addTextField("Node 2:", node2);
+        ui.addTextField("Distance:", distance);
+        displayGraphButton = displayGraphButton(graph, ui);
+        shortestPathButton = shortestPathButton(graph, ui);
+        textArea = textArea();
+        addNode = addNode(graph, ui, textArea);
+        closeGraph = closeGraph(ui);
+        clearGraph = clearGraph(ui, graph);
+        ui.addTextField("Speed:", speed);
+
+        ui.addButton(displayGraphButton);
+        ui.addButton(shortestPathButton);
+        ui.addButton(addNode);
+        ui.addButton(closeGraph);
+        ui.addButton(clearGraph);
+        ui.addTextArea(textArea);
+
 //        ui.addTextField("Node 1:", new JTextField(5));
 //        ui.addTextField("Node 2:", new JTextField(5));
 //        ui.addTextField("Distance:", new JTextField(5));
@@ -61,14 +86,52 @@ public class Application {
 
         ui.display();
     }
+    private JButton clearGraph(UserInterface ui, GraphImpl graph) {
+        JButton button = new JButton("Clear graph");
+        button.addActionListener(e -> {
+            pathDisplayer.clear(graph);
+            shortestPathButton.setEnabled(true);
+        });
+        return button;
+    }
+    private JButton closeGraph(UserInterface ui) {
+        JButton button = new JButton("Close graph");
+        button.addActionListener(e -> {
+            ui.closeGraph();
+            addNode.setEnabled(true);
+            displayGraphButton.setEnabled(true);
+            node1.setEnabled(true);
+            node2.setEnabled(true);
+            distance.setEnabled(true);
+            closeGraph.setEnabled(false);
+        });
+        return button;
+    }
 
+    private JTextArea textArea() {
+        return new JTextArea();
+    }
 
-    private JButton addNode(GraphImpl graph, UserInterface ui) {
+    private JButton addNode(GraphImpl graph, UserInterface ui, JTextArea textArea) {
         JButton button = new JButton("Add node");
         ActionListener worker = (e) -> {
-                GraphNode node1 = graph.addNode( ui.getNode1());
-                GraphNode node2 = graph.addNode( ui.getNode2());
-                node1.addDestination(node2, ui.getDistance());
+            if (node1.getText() == null || node1.getText().isEmpty()) {
+                textArea.setText("Select node 1");
+                return;
+            }
+            if (node2.getText() == null || node2.getText().isEmpty()) {
+                textArea.setText("Select node 2");
+                return;
+            }
+            if (distance.getText() == null || distance.getText().isEmpty()) {
+                textArea.setText("Select distance");
+                return;
+            }
+            GraphNode node1 = graph.addNode(this.node1.getText());
+            GraphNode node2 = graph.addNode( this.node2.getText());
+            node1.addDestination(node2, Integer.valueOf(this.distance.getText()));
+            textArea.setText(this.node1.getText() + " -- " + this.distance.getText() +
+                    " -- > " + this.node2.getText() + "\n");
             graph.setAttribute("ui.stylesheet", CssLoader.loadCss());
         };
         button.addActionListener(e -> worker.actionPerformed(null));
@@ -85,22 +148,66 @@ public class Application {
 
     private JButton shortestPathButton(GraphImpl graph, UserInterface ui) {
         JButton button = new JButton("Shortest path");
-        SwingWorker worker = new SwingWorker() {
-            @Override
-            protected Object doInBackground() throws Exception {
-                dijkstry.run(graph, graph.getNode(ui.getNode1()));
-                pathDisplayer.show(graph.getNode(ui.getNode2()));
-                return null;
-            }
-        };
-        button.addActionListener(e -> worker.execute());
+        button.addActionListener(e -> createNewWorker(graph, ui).execute());
+//        button.addActionListener(e -> {
+//            dijkstry.run(graph, graph.getNode(ui.getNode1()));
+//            pathDisplayer.show(graph.getNode(ui.getNode2()));
+//        });
         return button;
     }
 
-    private JButton displayGraphButton(GraphImpl graph) {
+    private SwingWorker createNewWorker(GraphImpl graph, UserInterface ui) {
+        return new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                try {
+                    if (node1.getText() == null || node1.getText().isEmpty()) {
+                        textArea.setText("Select node 1");
+                        return null;
+                    }
+                    if (node2.getText() == null || node2.getText().isEmpty()) {
+                        textArea.setText("Select node 2");
+                        return null;
+                    }
+                    if (speed.getText() == null || speed.getText().isEmpty()) {
+                        textArea.setText("Select speed");
+                        return null;
+                    }
+                    if (graph.getNode(node1.getText()) == null) {
+                        textArea.setText("Node " + node1.getText() + " not found");
+                        return null;
+                    }
+                    if (graph.getNode(node2.getText()) == null) {
+                        textArea.setText("Node " + node2.getText() + " not found");
+                        return null;
+                    }
+                    node1.setEnabled(false);
+                    node2.setEnabled(false);
+                    shortestPathButton.setEnabled(false);
+                    pathDisplayer.setSpeed(Long.valueOf(speed.getText()));
+                    pathDisplayer.clear(graph);
+                    dijkstry.run(graph, graph.getNode(node1.getText()));
+                    pathDisplayer.show(graph.getNode(node1.getText()), graph.getNode(node2.getText()));
+                    node1.setEnabled(true);
+                    node2.setEnabled(true);
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        };
+    }
+
+    private JButton displayGraphButton(GraphImpl graph, UserInterface ui) {
         JButton button = new JButton("Display");
         button.addActionListener(e -> {
-            graph.display();
+            distance.setEnabled(false);
+            addNode.setEnabled(false);
+            displayGraphButton.setEnabled(false);
+            closeGraph.setEnabled(true);
+            Viewer graphViewer = graph.display();
+            ui.setGraphViewer(graphViewer);
         });
         return button;
     }

@@ -18,7 +18,7 @@ public class LayoutFrame {
     private DefaultView graphView;
 
     public LayoutFrame() {
-        frame.setPreferredSize(new Dimension(600, 600));
+        frame.setPreferredSize(new Dimension(400, 400));
         frame.setLayout(new FlowLayout());
 
     }
@@ -48,4 +48,8 @@ public class LayoutFrame {
     public void addTextField(String text, JTextField textField) {
         frame.add(new JLabel(text));
         frame.add(textField);}
+
+    public void addTextArea(JTextArea textArea) {
+        frame.add(textArea);
+    }
 }

@@ -1,13 +1,14 @@
 package pl.pk.isk.dijkstry.ui;
 
 import org.graphstream.graph.Edge;
+import pl.pk.isk.dijkstry.algh.GraphImpl;
 import pl.pk.isk.dijkstry.algh.GraphNode;
 
 import java.util.ListIterator;
 
 public class ShortestPathDisplayer implements PathDisplayer {
 
-    private final long sleep;
+    private long sleep;
 
     public ShortestPathDisplayer(long sleep) {
         this.sleep = sleep;
@@ -30,7 +31,7 @@ public class ShortestPathDisplayer implements PathDisplayer {
     }
 
     @Override
-    public void show(GraphNode dest) {
+    public void show(GraphNode from, GraphNode dest) {
         GraphNode prev = null;
         for (ListIterator<GraphNode> it = dest.getShortestPath().listIterator(); it.hasNext(); ) {
             GraphNode node = it.next();
@@ -64,6 +65,26 @@ public class ShortestPathDisplayer implements PathDisplayer {
         }
         node.removeAttribute("ui.class");
         sleep();
+    }
+
+    @Override
+    public void clear(GraphImpl graph) {
+        graph.forEach(node -> {
+            node.getEdgeSet().forEach(edge -> unmarkEdge(edge));
+            if (node == null) {
+                return;
+            }
+            node.removeAttribute("ui.class");
+        });
+    }
+
+    @Override
+    public void setSpeed(long speed) {
+        this.sleep = speed;
+    }
+
+    private void unmarkEdge(Edge edge) {
+        edge.removeAttribute("ui.class");
     }
 
     private void sleep() {

@@ -45,4 +45,9 @@ public class GraphNode extends SingleNode {
     public void setShortestPath(LinkedList<GraphNode> shortestPath) {
         this.shortestPath = shortestPath;
     }
+
+    public void clearPaths() {
+        this.distance = Integer.MAX_VALUE;
+        this.shortestPath.clear();
+    }
 }

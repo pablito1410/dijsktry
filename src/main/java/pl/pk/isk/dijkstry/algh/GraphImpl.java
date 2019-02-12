@@ -23,4 +23,8 @@ public class GraphImpl extends SingleGraph {
     public GraphNode getNode(String id) {
         return super.getNode(id);
     }
+
+    public void clearPaths() {
+        this.getNodeSet().forEach(node -> ((GraphNode)node).clearPaths());
+    }
 }

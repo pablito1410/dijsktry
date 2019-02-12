@@ -16,6 +16,7 @@ public class DijkstryImpl {
     }
 
     public GraphImpl run(GraphImpl graph, GraphNode source) {
+        graph.clearPaths();
         source.setDistance(0);
 
         Set<GraphNode> settledNodes = new HashSet<>();
