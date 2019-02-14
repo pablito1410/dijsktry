@@ -52,4 +52,8 @@ public class LayoutFrame {
     public void addTextArea(JTextArea textArea) {
         frame.add(textArea);
     }
+
+    public void addCheckbox(JCheckBox stepwise) {
+        frame.add(stepwise);
+    }
 }

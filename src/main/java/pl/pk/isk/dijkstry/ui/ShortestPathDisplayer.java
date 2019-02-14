@@ -4,6 +4,7 @@ import org.graphstream.graph.Edge;
 import pl.pk.isk.dijkstry.algh.GraphImpl;
 import pl.pk.isk.dijkstry.algh.GraphNode;
 
+import javax.swing.*;
 import java.util.ListIterator;
 
 public class ShortestPathDisplayer implements PathDisplayer {
@@ -17,6 +18,9 @@ public class ShortestPathDisplayer implements PathDisplayer {
     @Override
     public void markEdgeAndNode(GraphNode from, GraphNode node) {
         Edge edge = node.getEdgeFrom(from);
+        if (edge == null) {
+            return;
+        }
         edge.addAttribute("ui.class", "marked");
         node.setAttribute("ui.class", "marked");
         sleep();
@@ -25,13 +29,16 @@ public class ShortestPathDisplayer implements PathDisplayer {
     @Override
     public void unmarkEdgeAndNode(GraphNode from, GraphNode node) {
         Edge edge = node.getEdgeFrom(from);
+        if (edge == null) {
+            return;
+        }
         edge.removeAttribute("ui.class");
         node.removeAttribute("ui.class");
         sleep();
     }
 
     @Override
-    public void show(GraphNode from, GraphNode dest) {
+    public void show(GraphNode from, GraphNode dest, JTextArea textArea) {
         GraphNode prev = null;
         for (ListIterator<GraphNode> it = dest.getShortestPath().listIterator(); it.hasNext(); ) {
             GraphNode node = it.next();

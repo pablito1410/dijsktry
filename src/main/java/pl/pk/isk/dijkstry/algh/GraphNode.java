@@ -22,8 +22,12 @@ public class GraphNode extends SingleNode {
 
     public void addDestination(GraphNode destination, int distance) {
         adjacentNodes.put(destination, distance);
-        Edge edge = graph.addEdge(getId() + destination.getId(), this, destination, true);
+        Edge edge = graph.addEdge(getId() + destination.getId(), this, destination, false);
         edge.addAttribute("ui.label", distance);
+    }
+
+    public void addDestinationToExistingEdge(GraphNode destination, int distance) {
+        adjacentNodes.put(destination, distance);
     }
 
     public void setDistance(int distance) {

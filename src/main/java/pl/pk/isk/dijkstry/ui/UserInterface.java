@@ -72,4 +72,8 @@ public class UserInterface {
     public void setGraphViewer(Viewer graphViewer) {
         this.graphViewer = graphViewer;
     }
+
+    public void addCheckbox(JCheckBox stepwise) {
+        layoutFrame.addCheckbox(stepwise);
+    }
 }
