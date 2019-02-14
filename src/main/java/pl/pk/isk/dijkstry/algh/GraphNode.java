@@ -22,7 +22,7 @@ public class GraphNode extends SingleNode {
 
     public void addDestination(GraphNode destination, int distance) {
         adjacentNodes.put(destination, distance);
-        Edge edge = graph.addEdge(getId() + destination.getId(), this, destination, false);
+        Edge edge = graph.addEdge(getId() + destination.getId(), this, destination, true);
         edge.addAttribute("ui.label", distance);
     }
 
