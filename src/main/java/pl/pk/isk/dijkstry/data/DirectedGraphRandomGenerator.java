@@ -20,7 +20,7 @@ public class DirectedGraphRandomGenerator extends BaseGenerator {
     private GraphImpl graph;
 
     public DirectedGraphRandomGenerator(GraphImpl graph) {
-        super(true, false);
+        super(false, false);
         this.graph = graph;
         this.nodeNames = 0;
         this.setUseInternalGraph(true);
