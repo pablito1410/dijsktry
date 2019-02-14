@@ -5,12 +5,14 @@ node {
     size: 20px;
 }
 node.marked {
-    size: 20px;
+    size: 30px;
     fill-color: red, pink;
     fill-mode: gradient-diagonal2;
 }
 
 
 edge.marked {
-    fill-color: red;
+    fill-color: red, pink;
+    size: 3px;
+    fill-mode: gradient-diagonal2;
 }
