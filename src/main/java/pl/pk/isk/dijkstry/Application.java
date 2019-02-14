@@ -1,9 +1,6 @@
 package pl.pk.isk.dijkstry;
 
-import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
 import org.graphstream.algorithm.generator.Generator;
-import org.graphstream.algorithm.generator.RandomEuclideanGenerator;
-import org.graphstream.algorithm.generator.RandomGenerator;
 import org.graphstream.algorithm.randomWalk.RandomWalk;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.view.Viewer;
@@ -43,6 +40,7 @@ public class Application {
     private JButton removeNode;
     private JButton removeEdge;
     private JCheckBox stepwise;
+    private JTextField number;
 
     public Application(DataLoader dataLoader, DijkstryImpl dijkstry, PathDisplayer pathDisplayer) {
         this.dataLoader = dataLoader;
@@ -75,12 +73,21 @@ public class Application {
         ui.addTextField("Node 2:", node2);
         ui.addTextField("Distance:", distance);
         textArea = textArea();
+        textArea.setRows(10);
+        textArea.setColumns(25);
+        textArea().setEnabled(false);
+        textArea().setEditable(false);
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setBounds(10,10,200,50);
+        sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        sp.setEnabled(false);
         displayGraphButton = displayGraphButton(graph, ui);
         shortestPathButton = shortestPathButton(graph, ui, textArea);
         addNode = addNode(graph, ui, textArea);
         closeGraph = closeGraph(ui);
         clearGraph = clearGraph(ui, graph);
         removeGraph = removeGraph(ui, graph);
+        number = new JTextField(5);
         randomGraph = randomGraph(ui, graph);
         removeNode = removeNode(ui, graph);
         removeEdge = removeEdge(ui, graph);
@@ -92,12 +99,14 @@ public class Application {
         ui.addButton(addNode);
         ui.addButton(closeGraph);
         ui.addButton(clearGraph);
+        ui.addTextField("Number of nodes", number);
         ui.addButton(randomGraph);
         ui.addButton(removeGraph);
         ui.addButton(removeNode);
         ui.addButton(removeEdge);
         ui.addCheckbox(stepwise);
-        ui.addTextArea(textArea);
+//        ui.addTextArea(textArea);
+        ui.addScroll(sp);
 
 //        ui.addTextField("Node 1:", new JTextField(5));
 //        ui.addTextField("Node 2:", new JTextField(5));
@@ -143,12 +152,23 @@ public class Application {
     private JButton randomGraph(UserInterface ui, GraphImpl graph) {
         JButton button = new JButton("Random graph");
         button.addActionListener(e -> {
-            randomGraph(graph);
+            if (number.getText() == null || number.getText().isEmpty()) {
+                textArea.setText("Select number of nodes");
+                return;
+            }
+            if (Integer.valueOf(number.getText()) < 3) {
+                textArea.setText("Min 3 nodes!");
+                return;
+            }
+            randomGraph(graph, Integer.valueOf(number.getText()));
+            ui.closeGraph();
+            Viewer graphViewer = graph.display();
+            ui.setGraphViewer(graphViewer);
         });
         return button;
     }
 
-    private void randomGraph(GraphImpl graph) {
+    private void randomGraph(GraphImpl graph, int number) {
 //        Generator gen = new DirectedGraphRandomGenerator(2, true, true, graph);
 
 //        gen.addSink(graph);
@@ -156,14 +176,15 @@ public class Application {
 //        for(int i=0; i<300; i++)
 //            gen.nextEvents();
 //        gen.end();
-
+        graph.clear();
+        graph.setAttribute("ui.stylesheet", CssLoader.loadCss());
         Generator gen   = new DirectedGraphRandomGenerator(graph);
         RandomWalk rwalk = new RandomWalk();
 
         // We generate a 400 nodes Dorogovstev-Mendes graph.
         gen.addSink(graph);
         gen.begin();
-        for(int i=0; i<50; i++) {
+        for(int i=0; i<number - 3; i++) {
             gen.nextEvents();
         }
         gen.end();

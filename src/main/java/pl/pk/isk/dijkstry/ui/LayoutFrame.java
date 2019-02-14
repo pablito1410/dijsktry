@@ -56,4 +56,8 @@ public class LayoutFrame {
     public void addCheckbox(JCheckBox stepwise) {
         frame.add(stepwise);
     }
+
+    public void addScroll(JScrollPane sp) {
+        frame.getContentPane().add(sp);
+    }
 }

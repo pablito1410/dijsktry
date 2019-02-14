@@ -76,4 +76,8 @@ public class UserInterface {
     public void addCheckbox(JCheckBox stepwise) {
         layoutFrame.addCheckbox(stepwise);
     }
+
+    public void addScroll(JScrollPane sp) {
+        layoutFrame.addScroll(sp);
+    }
 }
