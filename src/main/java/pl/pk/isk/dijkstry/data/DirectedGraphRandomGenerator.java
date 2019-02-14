@@ -12,6 +12,8 @@ import org.graphstream.graph.Node;
 import pl.pk.isk.dijkstry.algh.GraphImpl;
 import pl.pk.isk.dijkstry.algh.GraphNode;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -20,7 +22,7 @@ public class DirectedGraphRandomGenerator extends BaseGenerator {
     private GraphImpl graph;
     private boolean directed;
 
-    public DirectedGraphRandomGenerator(GraphImpl graph, boolean directed) {
+    public DirectedGraphRandomGenerator(double averageDegree, GraphImpl graph, boolean directed) {
         super(directed, false);
         this.graph = graph;
         this.directed = directed;
@@ -45,9 +47,10 @@ public class DirectedGraphRandomGenerator extends BaseGenerator {
         this.nodeNames = 3;
     }
 
-    public void end() {
-        super.end();
-    }
+
+//    public void end() {
+//        super.end();
+//    }
 //    private GraphImpl graph;
 //
 //    public DirectedGraphRandomGenerator(GraphImpl graph) {

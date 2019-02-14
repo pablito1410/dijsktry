@@ -19,6 +19,7 @@ import pl.pk.isk.dijkstry.ui.UserInterface;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.util.DoubleSummaryStatistics;
 
 public class Application {
 
@@ -42,6 +43,7 @@ public class Application {
     private JCheckBox stepwise;
     private JTextField number;
     private JCheckBox directed = new JCheckBox("directed", false);
+    private JTextField averageDegree = new JTextField(5);
 
     public Application(DataLoader dataLoader, DijkstryImpl dijkstry, PathDisplayer pathDisplayer) {
         this.dataLoader = dataLoader;
@@ -102,6 +104,7 @@ public class Application {
         ui.addButton(closeGraph);
         ui.addButton(clearGraph);
         ui.addTextField("Number of nodes", number);
+//        ui.addTextField("Average degree", averageDegree);
         ui.addButton(randomGraph);
         ui.addButton(removeGraph);
         ui.addButton(removeNode);
@@ -181,7 +184,13 @@ public class Application {
 //        gen.end();
         graph.clear();
         graph.setAttribute("ui.stylesheet", CssLoader.loadCss());
-        Generator gen   = new DirectedGraphRandomGenerator(graph, directed.isSelected());
+        double av;
+        if (averageDegree.getText() == null || averageDegree.getText().isEmpty() || Integer.valueOf(averageDegree.getText()) < 0)
+            av = 3;
+        else
+            av = Integer.valueOf(averageDegree.getText());
+
+        Generator gen   = new DirectedGraphRandomGenerator(av, graph, directed.isSelected());
         RandomWalk rwalk = new RandomWalk();
 
         // We generate a 400 nodes Dorogovstev-Mendes graph.
