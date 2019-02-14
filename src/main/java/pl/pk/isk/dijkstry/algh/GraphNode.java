@@ -1,7 +1,6 @@
 package pl.pk.isk.dijkstry.algh;
 
 import org.graphstream.graph.Edge;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AbstractGraph;
 import org.graphstream.graph.implementations.SingleNode;
 
@@ -22,12 +21,21 @@ public class GraphNode extends SingleNode {
 
     public void addDestination(GraphNode destination, int distance) {
         adjacentNodes.put(destination, distance);
-        Edge edge = graph.addEdge(getId() + destination.getId(), this, destination, false);
+        Edge edge = graph.addEdge(getId() + destination.getId(), this, destination, ((GraphImpl)graph).isDirected());
         edge.addAttribute("ui.label", distance);
+
+        if (!((GraphImpl)graph).isDirected()) {
+            destination.getAdjacentNodes().put(this, distance);
+            Edge edge2 = graph.addEdge(getId() + destination.getId(), destination, this, ((GraphImpl)graph).isDirected());
+            edge2.addAttribute("ui.label", distance);
+        }
     }
 
-    public void addDestinationToExistingEdge(GraphNode destination, int distance) {
+    public void addDestinationToExistingEdge(GraphNode destination, int distance, boolean directed) {
         adjacentNodes.put(destination, distance);
+        if (!directed) {
+            destination.getAdjacentNodes().put(this, distance);
+        }
     }
 
     public void setDistance(int distance) {

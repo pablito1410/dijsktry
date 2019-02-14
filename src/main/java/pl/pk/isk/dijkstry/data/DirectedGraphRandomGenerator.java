@@ -18,10 +18,12 @@ import java.util.Random;
 public class DirectedGraphRandomGenerator extends BaseGenerator {
     protected int nodeNames;
     private GraphImpl graph;
+    private boolean directed;
 
-    public DirectedGraphRandomGenerator(GraphImpl graph) {
-        super(false, false);
+    public DirectedGraphRandomGenerator(GraphImpl graph, boolean directed) {
+        super(directed, false);
         this.graph = graph;
+        this.directed = directed;
         this.nodeNames = 0;
         this.setUseInternalGraph(true);
     }
@@ -34,6 +36,12 @@ public class DirectedGraphRandomGenerator extends BaseGenerator {
         this.addEdge("0-1", "0", "1");
         this.addEdge("1-2", "1", "2");
         this.addEdge("2-0", "2", "0");
+
+        if (!directed) {
+            this.addEdge("1-0", "1", "0");
+            this.addEdge("2-1", "2", "1");
+            this.addEdge("0-2", "0", "2");
+        }
         this.nodeNames = 3;
     }
 
@@ -85,14 +93,15 @@ public class DirectedGraphRandomGenerator extends BaseGenerator {
         String n1 = edge.getNode1().getId();
         this.addNode(name);
         this.addEdge(n0 + "-" + name, n0, name);
+
         this.addEdge(n1 + "-" + name, n1, name);
         GraphNode destination = graph.getNode(name);
 
         int random1 = random.nextInt(9) + 1;
         int random2 = random.nextInt(9) + 1;
-        graph.getNode(n0).addDestinationToExistingEdge(destination, random1);
+        graph.getNode(n0).addDestinationToExistingEdge(destination, random1, directed);
             graph.getEdge(n0 + "-" + name).addAttribute("ui.label", random1);
-        graph.getNode(n1).addDestinationToExistingEdge(destination, random2);
+        graph.getNode(n1).addDestinationToExistingEdge(destination, random2, directed);
         graph.getEdge(n1 + "-" + name).addAttribute("ui.label", random2);
         return true;
     }

@@ -9,6 +9,16 @@ public class GraphImpl extends SingleGraph {
 
     private boolean strictChecking;
 
+    public boolean isDirected() {
+        return directed;
+    }
+
+    public void setDirected(boolean directed) {
+        this.directed = directed;
+    }
+
+    private boolean directed;
+
     public GraphImpl(String id) {
         super(id, false, false);
         this.setNodeFactory(new NodeFactory<GraphNode>() {

@@ -41,6 +41,7 @@ public class Application {
     private JButton removeEdge;
     private JCheckBox stepwise;
     private JTextField number;
+    private JCheckBox directed = new JCheckBox("directed", false);
 
     public Application(DataLoader dataLoader, DijkstryImpl dijkstry, PathDisplayer pathDisplayer) {
         this.dataLoader = dataLoader;
@@ -69,6 +70,7 @@ public class Application {
         Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 //        viewer.enableAutoLayout();
         UserInterface ui = new UserInterface(viewer, new LayoutFrame());
+        speed.setText("100");
        ui.addTextField("Node 1:", node1);
         ui.addTextField("Node 2:", node2);
         ui.addTextField("Distance:", distance);
@@ -105,6 +107,7 @@ public class Application {
         ui.addButton(removeNode);
         ui.addButton(removeEdge);
         ui.addCheckbox(stepwise);
+        ui.addCheckbox(directed);
 //        ui.addTextArea(textArea);
         ui.addScroll(sp);
 
@@ -178,7 +181,7 @@ public class Application {
 //        gen.end();
         graph.clear();
         graph.setAttribute("ui.stylesheet", CssLoader.loadCss());
-        Generator gen   = new DirectedGraphRandomGenerator(graph);
+        Generator gen   = new DirectedGraphRandomGenerator(graph, directed.isSelected());
         RandomWalk rwalk = new RandomWalk();
 
         // We generate a 400 nodes Dorogovstev-Mendes graph.
@@ -235,6 +238,9 @@ public class Application {
             if (Integer.valueOf(distance.getText()) < 0) {
                 textArea.setText("Invalid distance");
                 return;
+            }
+            if (graph.getNodeSet().size() == 0) {
+                graph.setDirected(directed.isSelected());
             }
             GraphNode node1 = graph.addNode(this.node1.getText());
             GraphNode node2 = graph.addNode( this.node2.getText());
