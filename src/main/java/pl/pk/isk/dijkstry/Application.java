@@ -19,7 +19,6 @@ import pl.pk.isk.dijkstry.ui.UserInterface;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.util.DoubleSummaryStatistics;
 
 public class Application {
 
@@ -66,11 +65,9 @@ public class Application {
 
     private void run() {
         GraphImpl graph = dataLoader.loadGraph();
-//        GraphImpl graph = new GraphImpl("Test1");
         graph.setAttribute("ui.stylesheet", CssLoader.loadCss());
         graph.setAutoCreate(true);
         Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-//        viewer.enableAutoLayout();
         UserInterface ui = new UserInterface(viewer, new LayoutFrame());
         speed.setText("100");
        ui.addTextField("Node 1:", node1);
@@ -104,22 +101,13 @@ public class Application {
         ui.addButton(closeGraph);
         ui.addButton(clearGraph);
         ui.addTextField("Number of nodes", number);
-//        ui.addTextField("Average degree", averageDegree);
         ui.addButton(randomGraph);
         ui.addButton(removeGraph);
         ui.addButton(removeNode);
         ui.addButton(removeEdge);
         ui.addCheckbox(stepwise);
         ui.addCheckbox(directed);
-//        ui.addTextArea(textArea);
         ui.addScroll(sp);
-
-//        ui.addTextField("Node 1:", new JTextField(5));
-//        ui.addTextField("Node 2:", new JTextField(5));
-//        ui.addTextField("Distance:", new JTextField(5));
-//        ui.addListener(myListener(graph));
-//        pathDisplayer.show(graph.getNode("E"));
-
         ui.display();
     }
 
@@ -175,13 +163,6 @@ public class Application {
     }
 
     private void randomGraph(GraphImpl graph, int number) {
-//        Generator gen = new DirectedGraphRandomGenerator(2, true, true, graph);
-
-//        gen.addSink(graph);
-//        gen.begin();
-//        for(int i=0; i<300; i++)
-//            gen.nextEvents();
-//        gen.end();
         graph.clear();
         graph.setAttribute("ui.stylesheet", CssLoader.loadCss());
         double av;
@@ -191,16 +172,12 @@ public class Application {
             av = Integer.valueOf(averageDegree.getText());
 
         Generator gen   = new DirectedGraphRandomGenerator(av, graph, directed.isSelected());
-        RandomWalk rwalk = new RandomWalk();
-
-        // We generate a 400 nodes Dorogovstev-Mendes graph.
         gen.addSink(graph);
         gen.begin();
         for(int i=0; i<number - 3; i++) {
             gen.nextEvents();
         }
         gen.end();
-
     }
 
     private JButton clearGraph(UserInterface ui, GraphImpl graph) {
@@ -273,10 +250,6 @@ public class Application {
     private JButton shortestPathButton(GraphImpl graph, UserInterface ui, JTextArea textArea) {
         JButton button = new JButton("Shortest path");
         button.addActionListener(e -> createNewWorker(graph, ui, textArea).execute());
-//        button.addActionListener(e -> {
-//            dijkstry.run(graph, graph.getNode(ui.getNode1()));
-//            pathDisplayer.show(graph.getNode(ui.getNode2()));
-//        });
         return button;
     }
 
@@ -340,7 +313,6 @@ public class Application {
         return new ViewerListener() {
             @Override
             public void viewClosed(String viewName) {
-                // dont care
             }
 
             @Override
@@ -357,7 +329,6 @@ public class Application {
 
             @Override
             public void buttonReleased(String id) {
-                // don't care
             }
         };
     }

@@ -36,8 +36,6 @@ public class DijkstryImpl {
                 Integer edgeWeight = adjacencyPair.getValue();
 
                 displayer.markEdgeAndNode(currentNode, adjacentNode);
-//                textArea.setText(String.format("%s --> %s %d\n",
-//                        currentNode.getId(), adjacentNode.getId(), edgeWeight));
                 if (!settledNodes.contains(adjacentNode)) {
                     calculateMinimumDistance(adjacentNode, edgeWeight, currentNode, textArea);
                     unsettledNodes.add(adjacentNode);
@@ -83,7 +81,6 @@ public class DijkstryImpl {
             LinkedList<GraphNode> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
             shortestPath.add(sourceNode);
             evaluationNode.setShortestPath(shortestPath);
-//            textArea.append(shortestPath.get(0) + " --> " + evaluationNode.getId() + " " + evaluationNode.getDistance());
         }
     }
 
@@ -93,7 +90,6 @@ public class DijkstryImpl {
         }
         final CountDownLatch latch = new CountDownLatch(1);
         KeyEventDispatcher dispatcher = new KeyEventDispatcher() {
-            // Anonymous class invoked from EDT
             public boolean dispatchKeyEvent(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE)
                     latch.countDown();
